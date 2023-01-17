@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   PactConsumerOptionsFactory,
   PactConsumerOverallOptions,
-} from '@you54f/nestjs-pact';
+} from 'nestjs-pact';
 import { execSync } from "child_process";
 import { versionFromGitTag } from "absolute-version";
 

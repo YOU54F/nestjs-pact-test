@@ -1,4 +1,4 @@
-import { PactFactory } from "@you54f/nestjs-pact"
+import { PactFactory } from "nestjs-pact"
 import { Test } from "@nestjs/testing"
 import { HttpStatus } from "@nestjs/common"
 import { AppModule } from "../src/app.module"

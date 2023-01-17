@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PactConsumerModule } from '@you54f/nestjs-pact';
+import { PactConsumerModule } from 'nestjs-pact';
 import { PactConsumerConfigOptionsService } from './pact-consumer-config-options.service';
 import { AppModule } from '../../src/app.module';
 

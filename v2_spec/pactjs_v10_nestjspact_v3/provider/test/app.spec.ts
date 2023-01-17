@@ -1,5 +1,5 @@
 import { Test } from "@nestjs/testing"
-import { PactVerifierService } from "@you54f/nestjs-pact"
+import { PactVerifierService } from "nestjs-pact"
 import { INestApplication, Logger, LoggerService } from "@nestjs/common"
 import { AppModule } from "../src/app.module"
 import { AppRepository } from "../src/app.repository"

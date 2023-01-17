@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { Publisher } from '@pact-foundation/pact';
-import { PactModuleProviders } from '@you54f/nestjs-pact';
+import { Publisher } from '@pact-foundation/pact-core';
+import { PactModuleProviders } from 'nestjs-pact';
 import { PactModule } from './pact.module';
 // import { Logger, LoggerService } from "@nestjs/common";
 
@@ -17,7 +17,7 @@ import { PactModule } from './pact.module';
   }
 
   try {
-    await publisher.publishPacts();
+    await publisher.publish();
 
     console.log('Pact contract publishing complete!');
     console.log('');
