@@ -16,10 +16,10 @@ jobs:
       - run: make v2_pactjs_v9_consumer_test
       - run: make v2_pactjs_v9_provider_install
       - run: make v2_pactjs_v9_provider_test_local
-      # - run: make v2_pactjs_v10_consumer_install
-      # - run: make v2_pactjs_v10_consumer_test
-      # - run: make v2_pactjs_v10_provider_install
-      # - run: make v2_pactjs_v10_provider_test_local
+      - run: make v2_pactjs_v10_consumer_install
+      - run: make v2_pactjs_v10_consumer_test
+      - run: make v2_pactjs_v10_provider_install
+      - run: make v2_pactjs_v10_provider_test_local
       # - run: make v3_pactjs_v10_consumer_install
       # - run: make v3_pactjs_v10_consumer_test
       # - run: make v3_pactjs_v10_provider_install
