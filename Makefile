@@ -23,7 +23,7 @@ v2_pactjs_v9_provider_verify_publish_broker:
 	cd v2_spec/pactjs_v9_nestjspact_v2/provider && CI=true npm run test
 
 v2_pactjs_v10_consumer_install:
-	cd v2_spec/pactjs_v10_nestjspact_v3/consumer && npm install
+	cd v2_spec/pactjs_v10_nestjspact_v3/consumer && npm install && mkdir -p pact/pacts
 
 v2_pactjs_v10_consumer_test:
 	cd v2_spec/pactjs_v10_nestjspact_v3/consumer && npm run test
