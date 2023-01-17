@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   PactProviderOptionsFactory,
   PactProviderOptions
-} from "@you54f/nestjs-pact";
+} from "nestjs-pact";
 import { versionFromGitTag } from "absolute-version";
 import { AppRepository } from "../../src/app.repository";
 import { execSync } from "child_process";
