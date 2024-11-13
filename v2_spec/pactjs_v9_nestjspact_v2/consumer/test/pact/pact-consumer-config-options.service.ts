@@ -23,6 +23,7 @@ export class PactConsumerConfigOptionsService
         log: path.resolve(process.cwd(), 'pact', 'logs', 'mockserver-integration.log'),
         dir: path.resolve(process.cwd(), 'pact','pacts'),
         logLevel: 'warn',
+        host: "localhost",
         spec: 2,
       },
       publication: {

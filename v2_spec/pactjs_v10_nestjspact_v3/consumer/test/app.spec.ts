@@ -39,7 +39,7 @@ describe('Pact', () => {
      * if the calls are not seen.
      */
     const { port } = await provider.setup();
-    process.env.API_HOST = `http://localhost:${port}`;
+    process.env.API_HOST = `http://127.0.0.1:${port}`;
   });
 
   // After each individual test (one or more interactions)
