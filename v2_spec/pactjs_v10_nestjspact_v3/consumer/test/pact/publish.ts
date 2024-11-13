@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { Publisher } from '@pact-foundation/pact-core';
+import { Publisher } from '@pact-foundation/pact-cli';
 import { PactModuleProviders } from 'nestjs-pact';
 import { PactModule } from './pact.module';
 // import { Logger, LoggerService } from "@nestjs/common";

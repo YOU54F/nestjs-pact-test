@@ -33,6 +33,7 @@
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.7",
     "@pact-foundation/pact": "^13.1.4",
+    "@pact-foundation/pact-cli": "^16.0.4",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.9.0",
