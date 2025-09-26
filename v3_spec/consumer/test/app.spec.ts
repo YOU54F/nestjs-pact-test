@@ -7,7 +7,7 @@ import { MatchersV2, Matchers, PactV3 } from "@pact-foundation/pact"
 import { AppService } from "../src/app.service"
 import { Animal } from "../src/animal.interface"
 import { HTTPMethods } from "@pact-foundation/pact/src/common/request"
-import { AnyTemplate, Matcher } from "@pact-foundation/pact/src/dsl/matchers"
+import { AnyTemplate } from "@pact-foundation/pact/src/dsl/matchers"
 
 jest.setTimeout(30000);
 
