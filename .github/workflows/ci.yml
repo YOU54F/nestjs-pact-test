@@ -51,15 +51,12 @@ jobs:
       - name: Login to Verdaccio
         run: |
             echo -e "//verdaccio:4873/:_authToken=\"fake-token\"" > /tmp/.npmrc
-
+      - run: curl http://verdaccio:4873
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'http://verdaccio:4873'
-
-      # - run: corepack enable
-        # Required for yarn, when run via act locally
 
       - run: |
           git config --global user.email "you@example.com"
