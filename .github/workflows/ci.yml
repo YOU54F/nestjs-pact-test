@@ -4,22 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare-config:
-    name: Prepare Verdaccio Config
-    runs-on: ubuntu-latest
-    outputs:
-      config-path: ${{ steps.copy-config.outputs.config-path }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Copy Verdaccio config to workspace
-        id: copy-config
-        run: |
-          echo "config-path=$GITHUB_WORKSPACE/conf" >> $GITHUB_OUTPUT
+  # prepare-config:
+  #   name: Prepare Verdaccio Config
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     config-path: ${{ steps.copy-config.outputs.config-path }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Copy Verdaccio config to workspace
+  #       id: copy-config
+  #       run: |
+  #         echo "config-path=$GITHUB_WORKSPACE/conf" >> $GITHUB_OUTPUT
 
 
   main:
     name: Build & Test
-    needs: prepare-config
+    # needs: prepare-config
     runs-on: ubuntu-latest
     container:
       image: node:24
@@ -28,8 +28,8 @@ jobs:
         image: verdaccio/verdaccio:latest
         ports:
           - 4873:4873
-        volumes:
-          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
+        # volumes:
+        #   - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
     strategy:
       matrix:
         node-version: [24.x]
