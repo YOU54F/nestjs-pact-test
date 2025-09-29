@@ -28,8 +28,8 @@
     "@nestjs/platform-express": "11.1.6",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^6.0.1",
-    "router": "^2.2.0",
     "rxjs": "7.8.2"
+
   },
   "devDependencies": {
     "@nestjs/cli": "11.0.10",

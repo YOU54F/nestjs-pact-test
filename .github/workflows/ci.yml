@@ -1,0 +1,61 @@
+name: test
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  main:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # node-version: [20.x, 22.x, 24.x]
+        # spec: [v2, v3, v4]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: corepack enable
+        # Required for yarn, when run via act locally
+
+      - name: Clone and Build Pact.js
+        run: |
+          cd /tmp
+          git clone https://github.com/pact-foundation/pact-js
+          cd pact-js
+          git checkout feat/v4-asynchronous-messages-pact-core-v17
+          npm install
+          npm run dist
+          cd dist
+          yarn link
+      - name: Clone and Build Nest.js Pact
+        run: |
+          cd /tmp
+          git clone https://github.com/pact-foundation/nestjs-pact
+          cd nestjs-pact
+          git checkout feat/v3_v4_interface
+          yarn install
+          yarn link @pact-foundation/pact
+          yarn build
+          yarn link
+      # - run: make ${{ matrix.spec }}_consumer_install
+      # - run: make ${{ matrix.spec }}_consumer_test
+      # - run: make ${{ matrix.spec }}_provider_install
+      # - run: make ${{ matrix.spec }}_provider_test_local
+      - run: make v2_consumer_install
+      - run: make v2_consumer_test
+      - run: make v3_consumer_install
+      - run: make v3_consumer_test
+      - run: make v4_consumer_install
+      - run: make v4_consumer_test
+      # - run: make v2_provider_install
+      # - run: make v2_provider_test_local
+      # - run: make v3_provider_install
+      # - run: make v3_provider_test_local
+      # - run: make v4_provider_install
+      # - run: make v4_provider_test_local

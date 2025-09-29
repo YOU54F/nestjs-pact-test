@@ -137,7 +137,7 @@ describe('Pact', () => {
       );
 
       it('returns a 401 unauthorized', () => {
-        return  provider.executeTest(async (mockServer) => {
+        return provider.executeTest(async (mockServer) => {
           process.env.API_HOST = mockServer.url;
           return expect(animalsService.suggestion(suitor)).rejects.toThrow();
         });
