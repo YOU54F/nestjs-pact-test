@@ -14,7 +14,7 @@ jobs:
       - name: Copy Verdaccio config to workspace
         id: copy-config
         run: |
-          echo "config-path=$GITHUB_WORKSPACE/config.yaml" >> $GITHUB_OUTPUT
+          echo "config-path=$GITHUB_WORKSPACE/conf" >> $GITHUB_OUTPUT
 
 
   main:
@@ -29,7 +29,7 @@ jobs:
         ports:
           - 4873:4873
         volumes:
-          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf/config.yaml
+          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
