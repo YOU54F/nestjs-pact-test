@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { HttpService } from '@nestjs/axios'
 import { Animal } from "./animal.interface"
-
+import { lastValueFrom } from 'rxjs';
 @Injectable()
 export class AppService {
   private static readonly AUTH_HEADER = { authorization: "Bearer token" }
@@ -13,21 +13,21 @@ export class AppService {
   public constructor(private readonly http: HttpService) {}
 
   public async availableAnimals(): Promise<Animal[]> {
-    const { data } = await this.http
-      .get(`${AppService.getApiEndpoint()}/animals/available`, {
+    const { data } = await lastValueFrom(
+      this.http.get(`${AppService.getApiEndpoint()}/animals/available`, {
         headers: { ...AppService.AUTH_HEADER },
       })
-      .toPromise()
+    )
 
     return data
   }
 
   public async getAnimalById(id: string | number): Promise<Animal> {
-    const { data } = await this.http
-      .get(`${AppService.getApiEndpoint()}/animals/${id}`, {
-        headers: { ...AppService.AUTH_HEADER },
+    const { data } = await lastValueFrom(
+      this.http.get(`${AppService.getApiEndpoint()}/animals/${id}`, {
+      headers: { ...AppService.AUTH_HEADER },
       })
-      .toPromise()
+    )
 
     return data
   }
@@ -64,11 +64,11 @@ export class AppService {
   }
 
   public async createMateForDates(mate: Animal): Promise<Animal> {
-    const { data } = await this.http
-      .post(`${AppService.getApiEndpoint()}/animals`, mate, {
-        headers: { "Content-Type": "application/json; charset=utf-8" },
+    const { data } = await lastValueFrom(
+      this.http.post(`${AppService.getApiEndpoint()}/animals`, mate, {
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       })
-      .toPromise()
+    )
 
     return data
   }

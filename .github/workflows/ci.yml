@@ -4,24 +4,66 @@ on:
   workflow_dispatch:
 
 jobs:
-  main:
-    name: Build & Test
+  prepare-config:
+    name: Prepare Verdaccio Config
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
-        # node-version: [20.x, 22.x, 24.x]
-        # spec: [v2, v3, v4]
+    outputs:
+      config-path: ${{ steps.copy-config.outputs.config-path }}
     steps:
       - uses: actions/checkout@v4
+      - name: Copy Verdaccio config to workspace
+        id: copy-config
+        run: |
+          echo "config-path=$GITHUB_WORKSPACE/config.yaml" >> $GITHUB_OUTPUT
+
+
+  main:
+    name: Build & Test
+    needs: prepare-config
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    services:
+      verdaccio:
+        image: verdaccio/verdaccio:latest
+        ports:
+          - 4873:4873
+        volumes:
+          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf/config.yaml
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+        spec: [v2, v3, v4]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Verdaccio
+        run: |
+          for i in {1..30}; do
+            if curl -s http://verdaccio:4873/; then
+              echo "Verdaccio is up!"
+              break
+            fi
+            echo "Waiting for Verdaccio..."
+            sleep 2
+          done
+
+      - name: Login to Verdaccio
+        run: |
+            echo -e "//verdaccio:4873/:_authToken=\"fake-token\"" > /tmp/.npmrc
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'http://verdaccio:4873'
 
       - run: corepack enable
         # Required for yarn, when run via act locally
+
+      - run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
 
       - name: Clone and Build Pact.js
         run: |
@@ -30,37 +72,22 @@ jobs:
           cd pact-js
           git checkout feat/v4-asynchronous-messages-pact-core-v17
           npm install
+          npm run release
           npm run dist
-          cd dist
-          yarn link
+          npm publish ./dist --access public --tag latest
+
       - name: Clone and Build Nest.js Pact
         run: |
           cd /tmp
           git clone https://github.com/pact-foundation/nestjs-pact
           cd nestjs-pact
           git checkout feat/v3_v4_interface
+          yarn add @pact-foundation/pact@^16.0.0 --save-dev
           yarn install
-          yarn link @pact-foundation/pact
           yarn build
-          yarn link
-      # - run: make ${{ matrix.spec }}_consumer_install
-      # - run: make ${{ matrix.spec }}_consumer_test
-      # - run: make ${{ matrix.spec }}_provider_install
-      # - run: make ${{ matrix.spec }}_provider_test_local
-      - run: make v2_consumer_install
-      - run: make v2_consumer_test
-      - run: make v3_consumer_install
-      - run: make v3_consumer_test
-      - run: make v4_consumer_install
-      - run: make v4_consumer_test
+          npm publish
 
-
-      - run: make v2_provider_install
-      - run: make v2_provider_test_local
-        continue-on-error: true
-      - run: make v3_provider_install
-      - run: make v3_provider_test_local
-        continue-on-error: true
-      - run: make v4_provider_install
-      - run: make v4_provider_test_local
-        continue-on-error: true
+      - run: make ${{ matrix.spec }}_consumer_install
+      - run: make ${{ matrix.spec }}_consumer_test
+      - run: make ${{ matrix.spec }}_provider_install
+      - run: make ${{ matrix.spec }}_provider_test_local

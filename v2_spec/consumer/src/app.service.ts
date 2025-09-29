@@ -10,9 +10,7 @@ export class AppService {
     return process.env.API_HOST || "http://localhost:8081"
   }
 
-  public constructor(
-    private readonly http: HttpService = new HttpService()
-  ) {}
+  public constructor(private readonly http: HttpService) {}
 
   public async availableAnimals(): Promise<Animal[]> {
     this.http.axiosRef.defaults.httpAgent = new (require('http').Agent)({ keepAlive: false });

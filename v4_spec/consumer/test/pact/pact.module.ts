@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PactConsumerModule } from 'nestjs-pact';
 import { PactConsumerConfigOptionsService } from './pact-consumer-config-options.service';
 import { AppModule } from '../../src/app.module';
@@ -8,7 +8,7 @@ import { AppModule } from '../../src/app.module';
     PactConsumerModule.registerAsync({
       imports: [AppModule],
       useClass: PactConsumerConfigOptionsService,
-    }) as DynamicModule,
+    }),
   ],
 })
 export class PactModule {}
