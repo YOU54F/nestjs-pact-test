@@ -29,7 +29,8 @@ jobs:
         ports:
           - 4873:4873
         volumes:
-          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
+          - /home/runner/work/nestjs-pact-test/nestjs-pact-test/conf:/verdaccio/conf
+          # - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
     strategy:
       matrix:
         node-version: [24.x]
