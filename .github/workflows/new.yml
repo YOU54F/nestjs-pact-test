@@ -22,12 +22,6 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - name: Restart_Verdaccio
-        if: env.ACT != 'true'
-        # Restart Verdaccio after volumes have been checked out
-        uses: docker://docker
-        with:
-          args: docker restart verdaccio
       - name: Wait for Verdaccio
         run: |
           for i in {1..30}; do
