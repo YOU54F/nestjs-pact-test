@@ -29,8 +29,10 @@ jobs:
         ports:
           - 4873:4873
         volumes:
-          - /home/runner/work/nestjs-pact-test/nestjs-pact-test/conf:/verdaccio/conf
+          # - /home/runner/work/nestjs-pact-test/nestjs-pact-test/conf:/verdaccio/conf
+          - ${{ github.workspace }}/conf:/verdaccio/conf
           # - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
+        options: --name verdaccio
     strategy:
       matrix:
         node-version: [24.x]
@@ -40,7 +42,11 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-
+      - name: Restart_Verdaccio
+        # Restart Verdaccio after volumes have been checked out
+        uses: docker://docker
+        with:
+          args: docker restart verdaccio
       - name: Wait for Verdaccio
         run: |
           for i in {1..30}; do
