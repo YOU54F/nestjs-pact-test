@@ -33,20 +33,25 @@ jobs:
             sleep 2
           done
 
-      - name: Login to Verdaccio
-        run: |
-          npm install -g npm-cli-login
-          npm-cli-login -u test -p test -e test@example.com -r http://localhost:4873
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'http://localhost:4873'
 
+      - name: Login to Verdaccio
+        run: |
+          npm install -g @kenan/npm-cli-login
+          NPM_REGISTRY=http://localhost:4873 NPM_USER=test NPM_PASS=test NPM_EMAIL=test@example.com npm-cli-login
+          # npm-cli-login -u test -p test -e test@example.com -r http://localhost:4873
+
+      # - run: |
+      #     git config --global user.email "you@example.com"
+      #     git config --global user.name "Your Name"
+
       - run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+          cd v2_spec/consumer
+          npm publish
 
       - name: Clone and Build Pact.js
         run: |
