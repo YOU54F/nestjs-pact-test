@@ -60,6 +60,11 @@ jobs:
 
       - name: Login to Verdaccio
         run: |
+          curl -s \
+              -H "Accept: application/json" \
+              -H "Content-Type:application/json" \
+              -X PUT --data '{"name": "test", "password": "test"}' \
+              http://verdaccio:4873/-/user/org.couchdb.user:test
           TOKEN=$(curl -s \
             -H "Accept: application/json" \
             -H "Content-Type:application/json" \
