@@ -60,6 +60,7 @@ jobs:
 
       - name: Login to Verdaccio
         run: |
+          sleep 10
           curl -s \
               -H "Accept: application/json" \
               -H "Content-Type:application/json" \
