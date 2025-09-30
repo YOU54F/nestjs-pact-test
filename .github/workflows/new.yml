@@ -6,7 +6,7 @@ on:
 jobs:
   main:
     name: Build & Test
-    needs: prepare-config
+    # needs: prepare-config
     runs-on: ubuntu-latest
     services:
       verdaccio:
