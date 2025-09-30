@@ -9,12 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       config-path: ${{ steps.copy-config.outputs.config-path }}
+      option: ${{ steps.set-option.outputs.option }}
     steps:
       - uses: actions/checkout@v4
       - name: Copy Verdaccio config to workspace
         id: copy-config
         run: |
           echo "config-path=$GITHUB_WORKSPACE/conf" >> $GITHUB_OUTPUT
+      - name: set option flag if not act
+        id: set-option
+        run: |
+          if [ "$ACT" != "true" ]; then
+            echo "option=--name verdaccio" >> $GITHUB_OUTPUT
+          else
+            echo "option=" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
 
   main:
@@ -30,9 +40,9 @@ jobs:
           - 4873:4873
         volumes:
           # - /home/runner/work/nestjs-pact-test/nestjs-pact-test/conf:/verdaccio/conf
-          - ${{ github.workspace }}/conf:/verdaccio/conf
-          # - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
-        options: --name verdaccio
+          # - ${{ github.workspace }}/conf:/verdaccio/conf
+          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
+        options: ${{ needs.prepare-config.outputs.option }}
     strategy:
       matrix:
         node-version: [24.x]
@@ -43,6 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Restart_Verdaccio
+        if: env.ACT != 'true'
         # Restart Verdaccio after volumes have been checked out
         uses: docker://docker
         with:
@@ -60,12 +71,6 @@ jobs:
 
       - name: Login to Verdaccio
         run: |
-          sleep 10
-          curl -s \
-              -H "Accept: application/json" \
-              -H "Content-Type:application/json" \
-              -X PUT --data '{"name": "test", "password": "test"}' \
-              http://verdaccio:4873/-/user/org.couchdb.user:test
           TOKEN=$(curl -s \
             -H "Accept: application/json" \
             -H "Content-Type:application/json" \
