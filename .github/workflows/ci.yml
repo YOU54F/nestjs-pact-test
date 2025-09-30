@@ -26,7 +26,6 @@ jobs:
           fi
         shell: bash
 
-
   main:
     name: Build & Test
     needs: prepare-config
@@ -39,8 +38,6 @@ jobs:
         ports:
           - 4873:4873
         volumes:
-          # - /home/runner/work/nestjs-pact-test/nestjs-pact-test/conf:/verdaccio/conf
-          # - ${{ github.workspace }}/conf:/verdaccio/conf
           - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
         options: ${{ needs.prepare-config.outputs.option }}
     strategy:
@@ -69,20 +66,6 @@ jobs:
             sleep 2
           done
 
-      - name: Login to Verdaccio
-        run: |
-          TOKEN=$(curl -s \
-            -H "Accept: application/json" \
-            -H "Content-Type:application/json" \
-            -X PUT --data '{"name": "test", "password": "test"}' \
-            http://verdaccio:4873/-/user/org.couchdb.user:test 2>&1 | grep -Po \
-            '(?<="token": ")[^"]*')
-          echo "TOKEN=$TOKEN"
-
-      - run: |
-          npm config set "//verdaccio:4873/:_authToken=${{ env.TOKEN }}"
-          npm whoami --registry http://verdaccio:4873 || echo "Not logged in"
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -95,8 +78,6 @@ jobs:
 
       - name: Clone and Build Pact.js
         run: |
-          npm config set "//verdaccio:4873/:_authToken=${{ env.TOKEN }}"
-          npm whoami --registry http://verdaccio:4873 || echo "Not logged in"
           cd /tmp
           git clone https://github.com/pact-foundation/pact-js
           cd pact-js
