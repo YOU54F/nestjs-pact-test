@@ -66,10 +66,7 @@ jobs:
             -X PUT --data '{"name": "test", "password": "test"}' \
             http://verdaccio:4873/-/user/org.couchdb.user:test 2>&1 | grep -Po \
             '(?<="token": ")[^"]*')
-          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
-          # npm config set "//verdaccio:4873/:_authToken=$TOKEN"
-          # echo "//verdaccio:4873/:_authToken=$TOKEN" >> ~/.npmrc
-          # npm whoami --registry http://verdaccio:4873 || echo "Not logged in"
+          echo "TOKEN=$TOKEN"
 
       - run: |
           npm config set "//verdaccio:4873/:_authToken=${{ env.TOKEN }}"
