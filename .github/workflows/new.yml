@@ -1,45 +1,18 @@
-name: test
+name: test2
 on:
-  # push:
+  push:
   workflow_dispatch:
 
 jobs:
-  prepare-config:
-    name: Prepare Verdaccio Config
-    runs-on: ubuntu-latest
-    outputs:
-      config-path: ${{ steps.copy-config.outputs.config-path }}
-      option: ${{ steps.set-option.outputs.option }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Copy Verdaccio config to workspace
-        id: copy-config
-        run: |
-          echo "config-path=$GITHUB_WORKSPACE/conf" >> $GITHUB_OUTPUT
-      - name: set option flag if not act
-        id: set-option
-        run: |
-          if [ "$ACT" != "true" ]; then
-            echo "option=--name verdaccio" >> $GITHUB_OUTPUT
-          else
-            echo "option=" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
   main:
     name: Build & Test
     needs: prepare-config
     runs-on: ubuntu-latest
-    container:
-      image: node:24
     services:
       verdaccio:
         image: verdaccio/verdaccio:latest
         ports:
           - 4873:4873
-        volumes:
-          - ${{ needs.prepare-config.outputs.config-path }}:/verdaccio/conf
-        options: ${{ needs.prepare-config.outputs.option }}
     strategy:
       matrix:
         node-version: [24.x]
@@ -58,7 +31,7 @@ jobs:
       - name: Wait for Verdaccio
         run: |
           for i in {1..30}; do
-            if curl -s http://verdaccio:4873/; then
+            if curl -s http://localhost:4873/; then
               echo "Verdaccio is up!"
               break
             fi
@@ -66,11 +39,16 @@ jobs:
             sleep 2
           done
 
+      - name: Login to Verdaccio
+        run: |
+          npm install -g npm-cli-login
+          npm-cli-login -u test -p test -e test@example.com -r http://localhost:4873
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: 'http://verdaccio:4873'
+          registry-url: 'http://localhost:4873'
 
       - run: |
           git config --global user.email "you@example.com"
