@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common';
+import { PactV3ConsumerModule } from 'nestjs-pact';
+import { PactV3ConsumerConfigOptionsService } from './pact-consumer-config-options.service';
+import { AppModule } from '../../src/app.module';
+
+@Module({
+  imports: [
+    PactV3ConsumerModule.registerAsync({
+      imports: [AppModule],
+      useClass: PactV3ConsumerConfigOptionsService,
+    }),
+  ],
+})
+export class PactModule {}
