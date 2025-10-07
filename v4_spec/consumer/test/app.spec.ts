@@ -3,10 +3,9 @@ import { Test } from "@nestjs/testing"
 import { HttpStatus } from "@nestjs/common"
 import { AppModule } from "../src/app.module"
 import { PactModule } from "./pact/pact.module"
-import { MatchersV2, Matchers, Pact } from "@pact-foundation/pact"
+import { Matchers, Pact } from "@pact-foundation/pact"
 import { AppService } from "../src/app.service"
 import { Animal } from "../src/animal.interface"
-import { AnyTemplate } from "@pact-foundation/pact/src/dsl/matchers"
 
 jest.setTimeout(30000);
 
@@ -52,8 +51,8 @@ describe('Pact', () => {
 
 
   // Alias flexible matchers for simplicity
-  const { eachLike, like, regex } = Matchers;
-  const { iso8601DateTimeWithMillis } = MatchersV2;
+  const { eachLike, like, regex, datetime } = Matchers;
+  const iso8601DateTimeWithMillis = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[+-]\d{2}:\d{2})$/;
 
   // Animal we want to match :)
   const suitor: Animal = {
@@ -85,9 +84,13 @@ describe('Pact', () => {
    * It is also import here to not put in expectations for parts of the
    * API we don't care about
    */
+
   const animalBodyExpectation = {
     id: like(1),
-    available_from: iso8601DateTimeWithMillis(),
+    available_from: regex(
+      iso8601DateTimeWithMillis,
+      '2015-08-06T16:53:10.123+01:00'
+    ),
     first_name: like('Billy'),
     last_name: like('Goat'),
     animal: like('goat'),
@@ -210,11 +213,11 @@ describe('Pact', () => {
         .uponReceiving('a request to create a new mate')
         .withRequest('POST', '/animals', (builder) => {
           builder.headers({ 'Content-Type': 'application/json; charset=utf-8' });
-          builder.jsonBody(like(suitor as unknown as AnyTemplate));
+          builder.jsonBody(like(suitor));
         })
         .willRespondWith(HttpStatus.CREATED, (builder) => {
           builder.headers({ 'Content-Type': 'application/json; charset=utf-8' });
-          builder.jsonBody(like(suitor as unknown as AnyTemplate));
+          builder.jsonBody(like(suitor));
         })
         .executeTest(async (mockServer) => {
           process.env.API_HOST = mockServer.url;

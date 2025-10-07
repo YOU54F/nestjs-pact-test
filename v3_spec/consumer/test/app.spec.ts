@@ -3,11 +3,10 @@ import { Test } from "@nestjs/testing"
 import { HttpStatus } from "@nestjs/common"
 import { AppModule } from "../src/app.module"
 import { PactModule } from "./pact/pact.module"
-import { MatchersV2, Matchers, PactV3 } from "@pact-foundation/pact"
+import { Matchers, PactV3 } from "@pact-foundation/pact"
 import { AppService } from "../src/app.service"
 import { Animal } from "../src/animal.interface"
 import { HTTPMethods } from "@pact-foundation/pact/src/common/request"
-import { AnyTemplate } from "@pact-foundation/pact/src/dsl/matchers"
 
 jest.setTimeout(30000);
 
@@ -53,8 +52,8 @@ describe('Pact', () => {
 
 
   // Alias flexible matchers for simplicity
-  const { eachLike, like, regex } = Matchers;
-  const { iso8601DateTimeWithMillis } = MatchersV2;
+  const { eachLike, like, regex, datetime } = Matchers;
+  const iso8601DateTimeWithMillis = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[+-]\d{2}:\d{2})$/;
 
   // Animal we want to match :)
   const suitor: Animal = {
@@ -88,7 +87,10 @@ describe('Pact', () => {
    */
   const animalBodyExpectation = {
     id: like(1),
-    available_from: iso8601DateTimeWithMillis(),
+    available_from: regex(
+      iso8601DateTimeWithMillis,
+      '2015-08-06T16:53:10.123+01:00'
+    ),
     first_name: like('Billy'),
     last_name: like('Goat'),
     animal: like('goat'),
@@ -255,7 +257,7 @@ describe('Pact', () => {
         withRequest: {
           method: HTTPMethods.POST,
           path: '/animals',
-          body: like(suitor as unknown as AnyTemplate),
+          body: like(suitor),
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
           },
@@ -265,7 +267,7 @@ describe('Pact', () => {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
           },
-          body: like(suitor as unknown as AnyTemplate),
+          body: like(suitor),
         },
       }),
     );

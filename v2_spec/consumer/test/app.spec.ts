@@ -7,7 +7,7 @@ import { MatchersV2, PactV2 } from "@pact-foundation/pact"
 import { AppService } from "../src/app.service"
 import { Animal } from "../src/animal.interface"
 import { HTTPMethods } from "@pact-foundation/pact/src/common/request"
-import { AnyTemplate, Matcher } from "@pact-foundation/pact/src/dsl/matchers"
+import { AnyTemplate, MatcherV2 } from "@pact-foundation/pact/src/dsl/matchers"
 
 jest.setTimeout(30000);
 
@@ -240,7 +240,7 @@ describe('Pact', () => {
         withRequest: {
           method: HTTPMethods.POST,
           path: '/animals',
-          body: like(suitor) as unknown as Matcher<AnyTemplate>,
+          body: like(suitor) as unknown as MatcherV2<AnyTemplate>,
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
           },
@@ -250,7 +250,7 @@ describe('Pact', () => {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
           },
-          body: like(suitor) as unknown as Matcher<AnyTemplate>,
+          body: like(suitor) as unknown as MatcherV2<AnyTemplate>,
         },
       }),
     );
